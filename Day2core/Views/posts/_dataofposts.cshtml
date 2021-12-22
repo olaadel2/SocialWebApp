@@ -1,0 +1,32 @@
+﻿@model IEnumerable<Day2core.Models.post>
+@using System.Security.Claims;
+
+
+<h1>posts</h1>
+<div id="posts"></div>
+<table class="table">
+    <tr>
+        <th>id</th>
+        <th>title</th>
+        <th>bref</th>
+        <th>date</th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.id</td>
+            <td>@item.title</td>
+            <td>@item.bref</td>
+            <td>@item.date</td>
+            
+            @if (item.user_Id == this.User.FindFirstValue(ClaimTypes.NameIdentifier))
+            {
+                <td><a asp-action="delete" asp-route-id="@item.id" onclick="return confirm('are you sure to delete @item.title')" class="btn btn-danger">delete</a> </td>
+                <td><a asp-action="edit" asp-route-id="@item.id" onclick="return confirm('are you sure to edit @item.title')" class="btn btn-danger">Edit</a></td>
+            }
+        </tr>
+    }
+
+        </table>
+

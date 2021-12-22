@@ -1,0 +1,35 @@
+﻿@model post
+@{
+    ViewData["Title"] = "create";
+}
+
+
+
+
+
+<h1>create</h1>
+<form  method="post">
+    <div class="form-group">
+        <label asp-for="title">title</label>
+        <input type="text" asp-for="title" class="form-control" />
+        <span asp-validation-for="title" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="bref"></label>
+        <input type="text" asp-for="bref" class="form-control" />
+        <span asp-validation-for="bref" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="desc"></label>
+        <textarea asp-for="desc" class="form-control" ></textarea>
+        <span asp-validation-for="desc" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="blog_id">blog</label>
+        <select asp-for="blog_id" asp-items="ViewBag.plog"></select>
+        
+        <span asp-validation-for="blog_id" class="text-danger"></span>
+    </div>
+    <input type="submit" value="save" />
+</form>
+

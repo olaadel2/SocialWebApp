@@ -1,0 +1,69 @@
+﻿@model List<post>
+
+@{
+    ViewData["Title"] = "Index";
+}
+@*@Html.ActionLink("create", "create", "posts")*@
+
+<a class="btn btn-info" onclick="adddata()">create</a>
+
+    <div id = "posts" >
+
+
+</div>
+
+<div class="modal fade" id="popup" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+    </div>
+</div>
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.0.js"></script>
+<script type="text/javascript">
+    debugger;
+    $(document).ready(function () {
+        loaddata();
+    });
+    function adddata() {
+        $.ajax({
+            url: "/posts/dataformodel",
+            type: "GET",
+            success: function (data) {
+                $('.modal-dialog').html(data);
+                $('#popup').modal('show');
+            }
+        });
+    }
+    function loaddata() {
+        debugger;
+        $.ajax({
+            url: "/posts/dataofposts",
+            type: "GET",
+            success: function (data) {
+
+                    console.log(data);
+                    $('#posts').html(data);
+
+
+            }
+        });
+
+    }
+    function Add() {
+        debugger;
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "/posts/create",
+            data: $('#form1').serialize(),
+            success: function (data) {
+                if (data.ok == true) {
+
+                    $('#popup').modal('hide');
+                    loaddata();
+                }
+            }
+        })
+    }
+
+
+</script>
+

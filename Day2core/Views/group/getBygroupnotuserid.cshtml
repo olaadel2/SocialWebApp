@@ -1,0 +1,65 @@
+﻿@model group
+
+@{
+    ViewData["Title"] = "getByuserid";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+@if (ViewBag.group != null)
+{
+    <div>
+        <label asp-for="id">groups</label>
+        <select asp-for="id" asp-items="ViewBag.group" class="group-select">
+            <option>Select Group</option>
+        </select>
+
+        <span asp-validation-for="id" class="text-danger"></span>
+    </div> 
+ }
+else
+{
+    <div>
+        <label>groups</label>
+        <select class="group-select"></select>
+        <span class="text-danger"></span>
+    </div>
+}
+
+<script>
+    const selects = document.querySelectorAll('.group-select');
+    selects.forEach((elem) => {
+        elem.addEventListener('change', (event) => {
+            console.log(elem);
+            debugger;
+            Swal.fire({
+                title: "Are you sure?",
+                text: "JOIN TO GROUP",
+                type: "warning",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                confirmButtonText: "Yes, join it!",
+                confirmButtonColor: "#ec6c62"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/group/adduser/",
+                        data: { id: elem.value },
+                        type: "post",
+                        success: function (data) {
+                            //console.log(data);
+                         
+                                //window.location.href = '/blogs/index';  
+                        }
+                    })
+
+                } else if (result.isDenied) {
+
+                    Swal.fire("Oops", "error", "error");
+                }
+            }
+            );
+        });
+    });
+</script>
