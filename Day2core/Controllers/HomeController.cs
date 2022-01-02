@@ -1,4 +1,4 @@
-﻿using Day2core.Models;
+﻿using Day2core.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;

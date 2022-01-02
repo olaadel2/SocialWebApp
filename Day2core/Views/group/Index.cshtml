@@ -1,8 +1,78 @@
-﻿@model group
+﻿@*@model List<Day2core.ViewModel.GroupsView>*@
+@using Day2core;
+    @model dynamic
 @{
     ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="~/multiselect/example-styles.css" rel="stylesheet" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.0.js"></script>
+
+
+
+    <style>
+        .filter-col {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    </style>
+</head>
+<div class="container">
+    <div class="row">
+        <div id="filter-panel" class="collapse filter-panel">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <form class="form-inline" id="form2">
+                        <div class="form-group">
+                            <input type="hidden" name="id" value="@Model.group.id">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="filter-col" style="margin-right:0;" for="pref-search">StartDate:</label>
+                            <input type="date" class="form-control input-sm" name="startdate">
+                        </div>
+                        <div class="form-group">
+                            <label class="filter-col" style="margin-right:0;" for="pref-search">EndDate:</label>
+                            <input type="date" class="form-control input-sm" name="enddate">
+                        </div>
+                        <div class="form-group">
+                            <label class="filter-col" style="margin-right:0;" for="pref-search">SearchbyTitle:</label>
+                            <input type="text" class="form-control input-sm" id="txtpostName" name="title">
+                        </div>
+                        <div class="form-group" style="margin:25px;">
+                            <label class="filter-col" style="margin-right:0;" for="pref-search">SearchbyUserName:</label>
+
+                            <select id="dropDownList-example" name="usersid" multiple class="form-control js-example-basic-multiple">
+                                @foreach (var item in Model.users)
+                                {
+                                    <option value="@item.Id">@item.UserName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+
+                            <button type="button" class="btn btn-primary filter-col" style="margin:17px;" onclick="loaddata()">
+                                <span class="glyphicon glyphicon-record"></span> Search
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#filter-panel">
+            <span class="glyphicon glyphicon-cog"></span> Search
+        </button>
+    </div>
+</div>
+
+
+
 
 <div id="posts">
 
@@ -11,28 +81,20 @@
     <div class="modal-dialog">
     </div>
 </div>
-<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.0.js"></script>
-@if (ViewBag.group == null)
-{
 
-    <a class="btn btn-info" onclick="adddata()">create</a>
-    <script type="text/javascript">
+<script type="text/javascript">
 
-        debugger;
-        $(document).ready(function () {
+
+
+
+
+    $(document).ready(function () {
+        $('.js-example-basic-multiple').select2();
             loaddata();
         });
-    </script>
-}
-else
-{
-    <script type="text/javascript">
 
 
-        alert("@ViewBag.group");
-    </script>
-}
-<script type="text/javascript">
+
 
             function adddata(){
                 $.ajax({
@@ -44,13 +106,17 @@ else
                     }
                 });
             }
-            function loaddata() {
+    function loaddata() {
+
+       
+        var data = $('#form2').serialize();
+        console.log(data);
                 $.ajax({
-                    url: "/posts/getpostbygroup",
-                    data: { id: @Model.id },
-                    type: "GET",
+                    url: "/posts/getpostbygroup/",
+                    data: data,
+                    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                    type: "POST",
                     success: function (data) {
-                        console.log(data);
                         $('#posts').html(data);
 
                     }
@@ -63,9 +129,9 @@ else
                 $.ajax({
                     type: "POST",
                     dataType: "json",
-                    url: "/posts/createbygroup?groupid=" +@Model.id ,
-                    data:  _data ,
-                contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                    url: "/posts/createbygroup?groupid=" +@Model.group.id ,
+                    data: _data,
+                    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
 
             success: function (data) {
                         if (data.ok == true) {

@@ -3,57 +3,62 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Day2core.Models;
+using Day2core.DAL.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Day2core.Repository;
 using System.Security.Claims;
-
+using Day2core.ViewModel;
+using AutoMapper;
+using ReflectionIT.Mvc.Paging;
+using System.IO;
+using System.Web;
+using System.Web.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
 namespace Day2core.Controllers
 {
     public class postsController : Controller
     {
-        IpostRepository p;
-        IplogRepository b;
-        public postsController(IpostRepository p ,IplogRepository b)
+        IpostRepository postrepository;
+        IplogRepository plogrepository;
+        private readonly IMapper _mapper;
+        IWebHostEnvironment _webHostEnvironment;
+        
+        public postsController(IpostRepository postrepository, IplogRepository plogrepository, IMapper mapper, IWebHostEnvironment webHostEnvironment)
         {
-            this.p = p;
-            this.b = b;
+            this.postrepository = postrepository;
+            this.plogrepository = plogrepository;
+            this._mapper = mapper;
+            this._webHostEnvironment = webHostEnvironment;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int pageIndex)
         {
-            try
-            {
-                List<post> posts = p.getall();
-                if (posts == null)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    return View(posts);
-                }
-            }
-            catch (Exception ex)
-            {
-                return Json(new { ok = false, message = ex.Message });
-            }
+
+            return View();
            
         }
 
        
         [HttpPost]
-        public IActionResult create( post s)
+        public IActionResult create(PostsView s)
         {
-            var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            post post = new post();
+            
             try
             {
-                s.date = DateTime.Now;
-                s.user_Id = userId;
+                string photoname=UploadedFile(s);
+                var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+               post= _mapper.Map<post>(s);
+               
+           
+                post.date = DateTime.Now;
+                post.user_Id = userId;
+                post.ProfilePicture = photoname;
                 if (ModelState.IsValid)
                 {
-                    int count = p.add(s);
+                    int count = postrepository.add(post);
                     if (count > 0)
                     {
                         return Json(new { ok = true, message = "success" });
@@ -66,6 +71,7 @@ namespace Day2core.Controllers
                 else
                 {
                     return Json(new { ok = false, message = "fail" });
+                    //return View();
 
                 }
             }
@@ -76,7 +82,26 @@ namespace Day2core.Controllers
             }
 
         }
-        [HttpPost]
+        private string UploadedFile(PostsView model)
+        {
+            string uniqueFileName = null;
+
+            if (model.photo != null)
+            {
+                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "attach");
+                uniqueFileName =  model.photo.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    model.photo.CopyTo(fileStream);
+                }
+                
+            }
+            return uniqueFileName;
+        }
+    
+
+    [HttpPost]
         public IActionResult createbygroup([FromQuery]int groupid, post post)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -87,7 +112,7 @@ namespace Day2core.Controllers
                 post.group_id = groupid;
                 if (ModelState.IsValid)
                 {
-                    int count = p.add(post);
+                    int count = postrepository.add(post);
                     if (count > 0)
                     {
                         return Json(new { ok = true, message = "success" });
@@ -110,15 +135,15 @@ namespace Day2core.Controllers
             }
 
         }
-        public IActionResult delete(int id)
+        public IActionResult delete(post p)
         {
             try
             {
-                int count = p.delete(id);
+                int count = postrepository.delete(p);
                
                 if (count > 0)
                 {
-                    return RedirectToAction("index");
+                    return Json(new { ok = true, message = "success" });
                 }
                 else
                 {
@@ -127,44 +152,44 @@ namespace Day2core.Controllers
             }catch(Exception ex)
             {
                 return Json(new { ok = false, message = ex.Message });
-
             }
 
         }
-        public IActionResult edit(int id)
+        public PartialViewResult edit(int id)
         {
 
             try
             {
-                post posts = p.getByid(id);
-                if (posts == null)
+                post post = postrepository.getByid(id);
+                PostsView postsviews = _mapper.Map<PostsView>(post);
+                if (post == null)
                 {
-                    return NotFound();
+                    return PartialView();
                 }
                 else
                 {
-                    return View(posts);
+                    return PartialView("_edit",postsviews);
                 }
             }
             catch (Exception ex)
             {
-                return Json(new { ok = false, message = ex.Message });
+                return PartialView();
             }
 
         }
         [HttpPost]
-        public IActionResult edit(post pos)
+        public IActionResult edit(post post)
         {
             var userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            pos.user_Id = userId;
+            post.user_Id = userId;
             try
             {
                 if (ModelState.IsValid)
                 {
-                    int count = p.edit(pos);
+                    int count = postrepository.edit(post);
                     if (count > 0)
                     {
-                        return RedirectToAction("index");
+                        return Json(new { ok = true, message = "success" });
                     }
                     else
                     {
@@ -189,7 +214,7 @@ namespace Day2core.Controllers
         {
             try
             {
-                List<blog> blogs = b.getall();
+                List<blog> blogs = plogrepository.getall();
 
                 ViewBag.plog = new SelectList(blogs, "id", "name");
 
@@ -202,46 +227,92 @@ namespace Day2core.Controllers
            
             
         }
-        public PartialViewResult dataofposts()
+        public async Task<PartialViewResult> dataofposts(int page)
         {
-            
-            try
-            {
-                List<post> posts = p.getall();
-                if (posts == null)
-                {
-                    return PartialView();
-                }
-                else
-                {
-                    return PartialView("_dataofposts", posts);
-                }
-            }
-            catch (Exception ex)
-            {
-                return PartialView();
-            }
 
-        }
-        public PartialViewResult getpostbygroup(int id)
-        {
             try
             {
-                List<post> posts = p.getpostBygroupid(id);
-                if (posts.Count==0)
+
+
+                IOrderedQueryable<post> posts = postrepository.getall();
+
+                //foreach (var item in posts)
+                //{
+                //    item.CreatedBy = postrepository.GetcreatedBy(item.user_Id);
+                //}
+                var model = await PagingList<post>.CreateAsync(posts, 2, page);
+
+                if (model.Count == 0)
                 {
                     return PartialView();
                 }
                 else
                 {
-                    return PartialView("_getpostbygroup", posts);
+                    return PartialView("_dataofposts", model);
                 }
+                
             }
             catch (Exception ex)
             {
                 return PartialView();
             }
+   
         }
        
+        public PartialViewResult getpostbygroup(filter filter)
+        {
+            try
+            {
+                List<post> posts =postrepository.getpostByfilter(filter);
+                
+
+                List<PostsView> postsviews = new List<PostsView>();
+                foreach (var item in posts)
+                {
+                    postsviews.Add(_mapper.Map<PostsView>(item));
+                    
+                }
+                
+                return PartialView("_getpostbygroup", postsviews);
+              
+            }
+            catch (Exception ex)
+            {
+                return PartialView();
+            }
+        }
+        //public ActionResult RetrieveImage(int id)
+        //{
+        //    ///upload bu byte
+        //    //    if (photo != null)
+        //    //   {
+        //    //    if (photo.Length > 0)
+        //    //    {
+        //    //        //Getting FileName
+        //    //        var fileName = Path.GetFileName(photo.FileName);
+        //    //        //Getting file Extension
+        //    //        var fileExtension = Path.GetExtension(fileName);
+        //    //        // concatenating  FileName + FileExtension
+        //    //        var newFileName = String.Concat(Convert.ToString(Guid.NewGuid()), fileExtension);
+
+
+        //    //        using (var target = new MemoryStream())
+        //    //        {
+        //    //            photo.CopyTo(target);
+        //    //            post.image = target.ToArray();
+        //    //        }
+        //    //    }
+        //    //}
+        //    byte[] photo = postrepository.GetImageFromDataBase(id);
+        //    if (photo != null)
+        //    {
+        //        return File(photo, "image/jpg");
+        //    }
+        //    else
+        //    {
+        //        return null;
+        //    }
+        //}
+
     }
 }

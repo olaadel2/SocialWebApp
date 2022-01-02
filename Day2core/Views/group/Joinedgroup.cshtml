@@ -1,0 +1,103 @@
+﻿@model List<Day2core.ViewModel.GroupsView>
+
+
+<head>
+    @*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css" />*@
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+
+
+        body {
+            background-color: #eee;
+        }
+
+        .main {
+            border-collapse: separate !important;
+            border-spacing: 0 11px !important
+        }
+
+        tr {
+            border: 1px solid #eee
+        }
+
+        .head th {
+            font-weight: 500
+        }
+
+        tr:nth-child(3) {
+            border: solid thin
+        }
+
+
+        .btn {
+            height: 27px;
+            line-height: 11px;
+            color: #fff
+        }
+
+
+
+            .btn:focus {
+                color: #fff;
+                box-shadow: none !important
+            }
+    </style>
+</head>
+@if (Model.Count != 0)
+{
+    <div class="container mt-5">
+        <table class="table table-borderless main">
+            <thead>
+                <tr class="head">
+
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col"style=" width:11%">Created Date</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+
+
+                    <tr class="rounded bg-white">
+
+
+
+                        <td class="d-flex align-items-center"> <img src="https://thumbs.dreamstime.com/z/black-people-logo-group-icon-group-people-group-users-black-people-logo-group-icon-group-people-group-users-131881673.jpg" class="rounded-circle" width="35"> <span class="ml-2" style="width:91px">@item.title</span> </td>
+                        <td>@item.description</td>
+                        <td>Mar 21</td>
+
+
+                        @if (item.status == "Accepted")
+                        {
+
+
+                            <td>
+                                <a class="btn btn-danger" asp-action="index" asp-route-id="@item.id">view</a>
+
+                            </td>
+                        }
+                        else
+                        {
+                            <td> <a class="btn btn-danger">pending</a></td>
+                        }
+                    </tr>
+
+                }
+
+
+
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="text-center">
+        <p>No Groups </p>
+    </div>
+}

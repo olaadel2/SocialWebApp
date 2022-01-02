@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Day2core.Data;
-using Day2core.Models;
+using Day2core.Areas.Identity.Data;
+using Day2core.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,17 +41,11 @@ namespace Day2core.Repository
         public void delete(int id)
         {
             blog b = db.Blogs.Where(n => n.id == id).FirstOrDefault();
-            //if (b == null)
-            //{
-            //    return NotFound();
-            //}
-            //else
-            //{
-            //    db.Blogs.Remove(b);
-                var n=db.SaveChanges();
+            db.Blogs.Remove(b);
+           
+           db.SaveChanges();
                
 
-            //}
         }
     }
 }

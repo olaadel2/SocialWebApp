@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Day2core.Repository;
-using Day2core.Models;
+using Day2core.DAL.Models;
+using Microsoft.AspNetCore.Authorization;
+
 namespace Day2core.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class blogsController : Controller
     {
         IplogRepository blogrepository;
@@ -29,8 +32,7 @@ namespace Day2core.Controllers
         public IActionResult create(blog b)
         {
             blogrepository.add(b);
-            //return RedirectToAction("index");
-            //return Redirect("http://www.codeproject.com/");
+            
             return Json(b);
 
         }

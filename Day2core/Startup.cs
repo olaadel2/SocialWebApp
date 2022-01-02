@@ -8,12 +8,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Day2core.Models;
+using Day2core.DAL.Models;
 using Day2core.Repository;
 using Day2core.Areas;
-using Day2core.Data;
-using Microsoft.AspNetCore.Identity;
 using Day2core.Areas.Identity.Data;
+using Microsoft.AspNetCore.Identity;
+using ReflectionIT.Mvc.Paging;
 
 namespace Day2core
 {
@@ -37,7 +37,8 @@ namespace Day2core
            services.AddScoped<IpostRepository,postrepository>();
             services.AddScoped<IgroupRepository, grouprepository>();
             services.AddScoped<grouprepository, grouprepository>();
-           
+            services.AddScoped<groupofuserrepository, groupofuserrepository>();
+            services.AddAutoMapper(typeof(Startup));
             services.AddRazorPages();
             // services.AddIdentity<ApplicationUser, IdentityRole>()
             //.AddEntityFrameworkStores<Day2coreContext>()
@@ -50,14 +51,16 @@ namespace Day2core
             //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
             //    .AddEntityFrameworkStores<Day2coreContext>();
             services.AddIdentity<ApplicationUser, IdentityRole>()
+             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<Day2coreContext>()
             .AddDefaultUI()
             .AddDefaultTokenProviders();
+           
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -80,6 +83,8 @@ namespace Day2core
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+          
         }
+        
     }
 }

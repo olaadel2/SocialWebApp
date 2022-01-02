@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Day2core.Areas.Identity.Data;
-using Day2core.Models;
+using Day2core.DAL.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Day2core.Data
+namespace Day2core.Areas.Identity.Data
 {
     public class Day2coreContext : IdentityDbContext<ApplicationUser>
     {

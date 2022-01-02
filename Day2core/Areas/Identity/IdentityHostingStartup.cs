@@ -1,6 +1,6 @@
 ﻿using System;
 using Day2core.Areas.Identity.Data;
-using Day2core.Data;
+using Day2core.DAL.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
@@ -22,10 +22,10 @@ namespace Day2core.Areas.Identity
 
                 //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 //    .AddEntityFrameworkStores<Day2coreContext>();
-                services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<Day2coreContext>()
-                .AddDefaultUI()
-                .AddDefaultTokenProviders();
+                //services.AddIdentity<ApplicationUser, IdentityRole>()
+                //.AddEntityFrameworkStores<Day2coreContext>()
+                //.AddDefaultUI()
+                //.AddDefaultTokenProviders();
             });
         }
     }

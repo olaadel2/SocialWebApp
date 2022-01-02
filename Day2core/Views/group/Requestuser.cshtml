@@ -1,0 +1,175 @@
+﻿@*@model IEnumerable<Day2core.Models.groupofuser>*@
+@*@model List<groupofuser>*@
+@model List<Day2core.ViewModel.Grouprequest>
+@{
+    ViewData["Title"] = "Requestuser";
+}
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    @*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css" />*@
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+
+
+        body {
+            background-color: #eee;
+        }
+
+        .main {
+            border-collapse: separate !important;
+            border-spacing: 0 11px !important
+        }
+
+        tr {
+            border: 1px solid #eee
+        }
+
+        .head th {
+            font-weight: 500
+        }
+
+        tr:nth-child(3) {
+            border: solid thin
+        }
+
+
+        .btn {
+            height: 27px;
+            line-height: 11px;
+            color: #fff
+        }
+
+
+
+            .btn:focus {
+                color: #fff;
+                box-shadow: none !important
+            }
+    </style>
+</head>
+@if (Model.Count != 0)
+{
+
+<div class="container mt-5">
+    <table class="table table-borderless main">
+        <thead>
+            <tr class="head">
+
+                <th scope="col">Group</th>
+                <th scope="col">User</th>
+                <th scope="col">Request</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+
+
+                <tr class="rounded bg-white">
+
+
+
+                    <td class="d-flex align-items-center"> <img src="https://thumbs.dreamstime.com/z/black-people-logo-group-icon-group-people-group-users-black-people-logo-group-icon-group-people-group-users-131881673.jpg" class="rounded-circle" width="35"> <span class="ml-2">@item.title</span> </td>
+                    <td>@item.username</td>
+
+
+                    <td>
+
+                        <div class="dropdown">
+                            <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false"> Accept </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li><a class="dropdown-item" onclick="acceptRequest(@item.id)">Yes</a></li>
+                                <li><a class="dropdown-item" onclick="rejectRequest(@item.id)">No</a></li>
+                            </ul>
+                        </div>
+                    </td>
+
+                </tr>
+
+            }
+
+
+
+
+
+
+        </tbody>
+    </table>
+</div>
+}
+else {
+<div>NO REQUEST</div>
+}
+
+</html>
+<script>
+
+    function acceptRequest(id) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Accept Request",
+            type: "warning",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            confirmButtonText: "Yes, accept it!",
+            confirmButtonColor: "#ec6c62"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "/group/Acceptrequest/",
+                    data: { id: id },
+                    type: "post",
+                    success: function (data) {
+
+                        window.location.href = '/group/Requestuser';
+                    }
+                })
+
+            } else if (result.isDenied) {
+
+                Swal.fire("Oops", "error", "error");
+            }
+        }
+        );
+
+    }
+
+
+    function rejectRequest(id) {
+        debugger;
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Reject Request",
+            type: "warning",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            confirmButtonText: "Yes, reject it!",
+            confirmButtonColor: "#ec6c62"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "/group/Rejectrequest/",
+                    data: { id: id },
+                    type: "post",
+                    success: function (data) {
+
+                        window.location.href = '/group/Requestuser';
+                    }
+                })
+
+            } else if (result.isDenied) {
+
+                Swal.fire("Oops", "error", "error");
+            }
+        }
+        );
+
+    }
+</script>

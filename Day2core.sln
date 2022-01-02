@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day2core", "Day2core\Day2core.csproj", "{7921DA52-AD06-43C1-8742-256B3A92B085}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Day2core", "Day2core\Day2core.csproj", "{7921DA52-AD06-43C1-8742-256B3A92B085}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Day2core.DAL", "Day2core.DAL\Day2core.DAL.csproj", "{14F5F89D-08F8-446A-BF5D-72D3074DD7B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{7921DA52-AD06-43C1-8742-256B3A92B085}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7921DA52-AD06-43C1-8742-256B3A92B085}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7921DA52-AD06-43C1-8742-256B3A92B085}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14F5F89D-08F8-446A-BF5D-72D3074DD7B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14F5F89D-08F8-446A-BF5D-72D3074DD7B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14F5F89D-08F8-446A-BF5D-72D3074DD7B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14F5F89D-08F8-446A-BF5D-72D3074DD7B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,39 @@
+﻿@model Day2core.ViewModel.PostsView
+
+<h1>Edit</h1>
+
+<div class="modal-content">
+    <div asp-validation-summary="All" class="modal-body">
+        <form id="form1">
+            <div class="form-group">
+                
+                <input type="hidden" asp-for="id" class="form-control" />
+              
+            </div>
+   
+            <div class="form-group">
+                <label asp-for="title">title</label>
+                <input type="text" asp-for="title" class="form-control" />
+                <span asp-validation-for="title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="bref"></label>
+                <input type="text" asp-for="bref" class="form-control" />
+                <span asp-validation-for="bref" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="desc"></label>
+                <textarea asp-for="desc" class="form-control"></textarea>
+                <span asp-validation-for="desc" class="text-danger"></span>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="edit()">Submit</button>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,65 +1,124 @@
-﻿@model group
-
-@{
-    ViewData["Title"] = "getByuserid";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
+﻿@model List<group>
 <head>
+    @*<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css" />*@
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-@if (ViewBag.group != null)
-{
-    <div>
-        <label asp-for="id">groups</label>
-        <select asp-for="id" asp-items="ViewBag.group" class="group-select">
-            <option>Select Group</option>
-        </select>
+    <style>
 
-        <span asp-validation-for="id" class="text-danger"></span>
-    </div> 
- }
+
+        body {
+            background-color: #eee;
+        }
+
+        .main {
+            border-collapse: separate !important;
+            border-spacing: 0 11px !important
+        }
+
+        tr {
+            border: 1px solid #eee
+        }
+
+        .head th {
+            font-weight: 500
+        }
+
+        tr:nth-child(3) {
+            border: solid thin
+        }
+
+
+        .btn {
+            height: 27px;
+            line-height: 11px;
+            color: #fff
+        }
+
+
+
+            .btn:focus {
+                color: #fff;
+                box-shadow: none !important
+            }
+    </style>
+</head>
+@if (Model.Count != 0)
+{
+<div class="container mt-5">
+    <table class="table table-borderless main">
+        <thead>
+            <tr class="head">
+                
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col">Created Date</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+
+
+                <tr class="rounded bg-white">
+
+
+
+                    <td class="d-flex align-items-center"> <img src="https://thumbs.dreamstime.com/z/black-people-logo-group-icon-group-people-group-users-black-people-logo-group-icon-group-people-group-users-131881673.jpg" class="rounded-circle" width="35"> <span class="ml-2">@item.title</span> </td>
+                    <td>@item.description</td>
+                    <td>Mar 21</td>
+
+                    <td>
+                        <a class="btn btn-danger" onclick="getAllgroups(@item.id)">join</a>
+                      
+                    </td>
+                </tr>
+
+            }
+
+
+
+        </tbody>
+    </table>
+</div>
+}
 else
 {
-    <div>
-        <label>groups</label>
-        <select class="group-select"></select>
-        <span class="text-danger"></span>
+    <div class="text-center">
+        <p>You Joined To All Groups </p>
     </div>
 }
-
 <script>
-    const selects = document.querySelectorAll('.group-select');
-    selects.forEach((elem) => {
-        elem.addEventListener('change', (event) => {
-            console.log(elem);
-            debugger;
-            Swal.fire({
-                title: "Are you sure?",
-                text: "JOIN TO GROUP",
-                type: "warning",
-                showCancelButton: true,
-                closeOnConfirm: false,
-                confirmButtonText: "Yes, join it!",
-                confirmButtonColor: "#ec6c62"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: "/group/adduser/",
-                        data: { id: elem.value },
-                        type: "post",
-                        success: function (data) {
-                            //console.log(data);
-                         
-                                //window.location.href = '/blogs/index';  
-                        }
-                    })
+   
+    function getAllgroups(id) {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "JOIN TO GROUP",
+            type: "warning",
+            showCancelButton: true,
+            closeOnConfirm: false,
+            confirmButtonText: "Yes, join it!",
+            confirmButtonColor: "#ec6c62"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "/group/AdduserTogroup/",
+                    data: { id: id },
+                    type: "post",
+                    success: function (data) {
+                        //console.log(data);
 
-                } else if (result.isDenied) {
+                        window.location.href = '/group/Joinedgroup';
+                    }
+                })
 
-                    Swal.fire("Oops", "error", "error");
-                }
+            } else if (result.isDenied) {
+
+                Swal.fire("Oops", "error", "error");
             }
-            );
-        });
-    });
+        }
+        );
+
+    }
 </script>

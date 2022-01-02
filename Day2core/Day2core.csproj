@@ -5,13 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Areas\Identity\IdentityHostingStartup.cs" />
-    <Compile Remove="Models\BlogContext.cs" />
-    <Compile Remove="Models\Day2coreContext.cs" />
+    <Compile Remove="Migrations\**" />
+    <Content Remove="Migrations\**" />
+    <EmbeddedResource Remove="Migrations\**" />
+    <None Remove="Migrations\**" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="Views\group\getBygroupnotuserid.cshtml" />
+    <Content Remove="Views\group\getByuserid.cshtml" />
     <Content Remove="Views\posts\create.cshtml" />
+    <Content Remove="Views\posts\edit.cshtml" />
     <Content Remove="Views\posts\getpostbyuserid.cshtml" />
     <Content Remove="Views\posts\_getpostbyuser.cshtml" />
   </ItemGroup>
@@ -31,6 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="jQuery" Version="3.6.0" />
     <PackageReference Include="Microsoft.AspNet.WebPages" Version="3.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.12" />
@@ -43,10 +48,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
+    <PackageReference Include="ReflectionIT.Mvc.Paging" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="attach\" />
+    <Folder Include="wwwroot\attach\" />
     <Folder Include="bin\Debug\net5.0\cs\" />
     <Folder Include="bin\Debug\net5.0\de\" />
     <Folder Include="bin\Debug\net5.0\es\" />
@@ -95,6 +101,12 @@
     <None Include="obj\Debug\net5.0\ref\Day2core.dll" />
     <None Include="obj\Debug\net5.0\staticwebassets\Day2core.StaticWebAssets.Manifest.cache" />
     <None Include="obj\project.nuget.cache" />
+    <None Include="wwwroot\attach\news2.jpg" />
+    <None Include="wwwroot\attach\pexels-photo-853168.jpeg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Day2core.DAL\Day2core.DAL.csproj" />
   </ItemGroup>
 
 </Project>

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using Day2core.Areas.Identity.Data;
+using Day2core.DAL.Models;
 
 namespace Day2core.Areas.Identity.Pages.Account
 {

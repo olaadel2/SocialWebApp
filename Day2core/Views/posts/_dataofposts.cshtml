@@ -1,32 +1,212 @@
-﻿@model IEnumerable<Day2core.Models.post>
+﻿@*@model List<Day2core.ViewModel.PostsView>*@
+@model ReflectionIT.Mvc.Paging.PagingList<Day2core.DAL.Models.post>
+@using ReflectionIT.Mvc.Paging
+@addTagHelper *, ReflectionIT.Mvc.Paging
 @using System.Security.Claims;
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>*@
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="text/javascript">
+
+        function deleteConfirm(model) {
+            debugger;
+            console.log(model);
+            Swal.fire({
+                title: "Are you sure?",
+                text: "Delete Post",
+                type: "warning",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                confirmButtonText: "Yes, delete it!",
+                confirmButtonColor: "#ec6c62"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    debugger;
+                    $.ajax({
+                        url: "/posts/delete/",
+                        data: model,
+                        type: "delete",
+                        success: function (data) {
+                            if (data.ok == true) {
+                                console.log(data);
+                                console.log(id);
+                                window.location.href = '/posts/index';
+                            }
+                        }
+                    })
+
+                } else if (result.isDenied) {
+
+                    Swal.fire("Oops", "error", "error");
+                }
+            });
+        }
+        function editConfirm(id) {
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "Edit Post",
+                type: "warning",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                confirmButtonText: "Yes, edit it!",
+                confirmButtonColor: "#ec6c62"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    debugger;
+                    $.ajax({
+                        url: "/posts/edit",
+                        data: { id: id },
+                        type: "GET",
+                        success: function (data) {
+                            $('.modal-dialog').html(data);
+                            $('#popup').modal('show');
+                        }
+                    });
+
+                } else if (result.isDenied) {
+
+                    Swal.fire("Oops", "error", "error");
+                }
+            });
+        }
+        function edit() {
+
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "/posts/edit",
+                data: $('#form1').serialize(),
+                success: function (data) {
+                    if (data.ok == true) {
+
+                        $('#popup').modal('hide');
+                        window.location.href = '/posts/index';
+                    }
+                }
+            })
+        }
 
 
-<h1>posts</h1>
-<div id="posts"></div>
-<table class="table">
-    <tr>
-        <th>id</th>
-        <th>title</th>
-        <th>bref</th>
-        <th>date</th>
-        <th></th>
-    </tr>
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>@item.id</td>
-            <td>@item.title</td>
-            <td>@item.bref</td>
-            <td>@item.date</td>
-            
-            @if (item.user_Id == this.User.FindFirstValue(ClaimTypes.NameIdentifier))
-            {
-                <td><a asp-action="delete" asp-route-id="@item.id" onclick="return confirm('are you sure to delete @item.title')" class="btn btn-danger">delete</a> </td>
-                <td><a asp-action="edit" asp-route-id="@item.id" onclick="return confirm('are you sure to edit @item.title')" class="btn btn-danger">Edit</a></td>
-            }
-        </tr>
-    }
+    </script>
 
-        </table>
+    <style>
+        body {
+            background-color: #eee;
+        }
+
+        .time {
+            font-size: 9px !important
+        }
+
+        .socials i {
+            margin-right: 14px;
+            font-size: 17px;
+            color: #d2c8c8;
+            cursor: pointer
+        }
+
+        .feed-image img {
+            width: 100%;
+            height: auto
+        }
+
+        .publish:hover {
+            border-radius: 0px !important;
+            background: rgb(22, 22, 232);
+            color: #fff;
+            cursor: pointer
+        }
+
+        .share-input:focus {
+            outline: 0 !important;
+            box-shadow: none
+        }
+
+        .share-input {
+            outline: 0 !important;
+            box-shadow: none
+        }
+    </style>
+
+</head>
+
+<nav aria-label="Suppliers navigation example">
+    @await this.Component.InvokeAsync("Pager", new { pagingList = this.Model })
+</nav>
+<div class="container mt-4 mb-5">
+    <div class="d-flex justify-content-center row">
+        <div class="col-md-8">
+            <div class="feed p-2">
+
+                <div class="share border bg-white">
+                    <div class="d-flex flex-row inputs p-2 py-4"><img class="rounded-circle" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" width="40"><input type="text" class="border-0 form-control share-input" placeholder="Share your thoughts"></div>
+                    <div class="d-flex flex-row justify-content-between border-top">
+                        <div class="d-flex flex-row publish-options">
+                            <div class="align-items-center border-right p-2 share"><i class="fa fa-camera text-black-50"></i><span class="ml-1">Photo</span></div>
+                            <div class="align-items-center border-right p-2 share"><i class="fa fa-video-camera text-black-50"></i><span class="ml-1">Video</span></div>
+                            <div class="align-items-center border-right p-2 share"><i class="fa fa-file text-black-50"></i><span class="ml-1">Files</span></div>
+                        </div>
+                        <div class="publish-button">
+                            <div class="align-items-center border-left p-2 px-5 btn publish"><span class="ml-1"><a onclick="adddata()">Publish</a></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                @foreach (var item in Model)
+                {
+                    <div class="bg-white border mt-2">
+                        <div>
+                            <div class="d-flex flex-row justify-content-between align-items-center p-2 border-bottom">
+                                <div class="d-flex flex-row align-items-center feed-text px-2">
+                                    <div class="d-flex flex-column flex-wrap ml-2">
+                                        <img class="rounded-circle" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" width="45">
+                                        <span class="text-black-50 time">@item.ApplicationUser.UserName</span>
+                                    </div>
+
+                                    <div class="d-flex flex-column flex-wrap ml-2"><span class="font-weight-bold">@item.title</span><span class="text-black-50 time">@item.date</span></div>
+                                </div>
+                                @if (item.user_Id == this.User.FindFirstValue(ClaimTypes.NameIdentifier))
+                                {
+                                    <div class="feed-icon px-2">
+                                        <a onclick="deleteConfirm(@item)" class="text-danger p-2">Delete</a>
+                                        <a onclick="editConfirm(@item.id)">Edit</a>
+
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                        <div class="p-2 px-3" style="height: 85px">
+                            <span>@item.desc</span>
+                        </div>
+                        @if (item.ProfilePicture != null)
+                        {
+                            <div class="p-30 text-center">
+                                <img src="/attach/@item.ProfilePicture" alt="" height=300 width=500 asp-append-version="true" />
+                            </div>
+                        }
+
+
+
+
+                        <div class="d-flex justify-content-end socials p-2 py-3">
+                            <i class="fa fa-thumbs-up"></i><i class="fa fa-comments-o"></i><i class="fa fa-share"></i>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <nav aria-label="Suppliers navigation example">
+        <vc:pager paging-list="@Model" />
+    </nav>
+</div>
+
+
+
 

@@ -1,24 +1,25 @@
-﻿@model List<post>
-
+﻿@model List<Day2core.ViewModel.PostsView>
 @{
     ViewData["Title"] = "Index";
 }
 @*@Html.ActionLink("create", "create", "posts")*@
 
-<a class="btn btn-info" onclick="adddata()">create</a>
+@*<a class="btn btn-info" onclick="adddata()">create</a>*@
+<style>
+</style>
 
-    <div id = "posts" >
+<div id="posts">
 
 
 </div>
 
-<div class="modal fade" id="popup" role="dialog" aria-hidden="true">
+<div class="modal fade " id="popup" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
     </div>
 </div>
 <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.0.js"></script>
 <script type="text/javascript">
-    debugger;
+
     $(document).ready(function () {
         loaddata();
     });
@@ -32,15 +33,18 @@
             }
         });
     }
+   
+
     function loaddata() {
-        debugger;
+
         $.ajax({
-            url: "/posts/dataofposts",
+             url: '@Url.Action("dataofposts")',
             type: "GET",
+            data: { 'page':@Context.Request.Query["pageIndex"]?@Context.Request.Query["pageIndex"]:1},
             success: function (data) {
 
-                    console.log(data);
-                    $('#posts').html(data);
+                console.log(data);
+                $('#posts').html(data);
 
 
             }
@@ -49,11 +53,17 @@
     }
     function Add() {
         debugger;
+        var myform = document.getElementById("form1");
+        var formdate = new FormData(myform);
+         var _data = $('#form1').serialize();
         $.ajax({
             type: "POST",
-            dataType: "json",
-            url: "/posts/create",
-            data: $('#form1').serialize(),
+            url: "/posts/create/",
+            data: formdate,
+            cache: false,
+            contentType: false,
+            processData: false,
+
             success: function (data) {
                 if (data.ok == true) {
 
